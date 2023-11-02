@@ -44,12 +44,15 @@ LUAMOD_API int (luaopen_debug) (lua_State *L);
 #define LUA_LOADLIBNAME	"package"
 LUAMOD_API int (luaopen_package) (lua_State *L);
 
-#define LUA_CACHELIB
-LUAMOD_API int (luaopen_cache) (lua_State *L);
-LUALIB_API void (luaL_initcodecache) (void);
 
 /* open all previous libraries */
 LUALIB_API void (luaL_openlibs) (lua_State *L);
+
+
+
+#if !defined(lua_assert)
+#define lua_assert(x)	((void)0)
+#endif
 
 
 #endif
