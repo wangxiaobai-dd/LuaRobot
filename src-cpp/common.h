@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lua.hpp"
+#include "../third/lua/lua.hpp"
 
 struct StateDeleter
 {

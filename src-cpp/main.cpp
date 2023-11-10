@@ -1,9 +1,9 @@
 
 #include <iostream>
-#include "../third/lua/lua.hpp"
+#include <thread>
+#include "service.h"
 int main(int argc, char const *argv[])
 {
-    luaL_newstate();
-    std::cout << "aa" << std::endl;
+
     return 0;
 }
