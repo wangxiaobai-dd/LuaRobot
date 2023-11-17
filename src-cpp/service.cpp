@@ -32,5 +32,5 @@ int LuaService::setCallback(lua_State *L)
 
 void LuaService::init()
 {
-    
+
 }
