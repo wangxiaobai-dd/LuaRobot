@@ -8,14 +8,6 @@ struct CallbackContext
     lua_State* callbackL = nullptr;
 };
 
-struct StateDeleter
-{
-    void operator()(lua_State *L) const
-    {
-        lua_close(L);
-    }
-};
-
 class LuaService
 {
 public:
