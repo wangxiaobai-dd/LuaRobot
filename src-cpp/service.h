@@ -8,6 +8,9 @@ struct CallbackContext
     lua_State* callbackL = nullptr;
 };
 
+/*
+    服务间使用消息通信，不能直接访问调用
+*/
 class LuaService
 {
 public:
@@ -21,4 +24,9 @@ public:
 private:
     CallbackContext* callback;
     std::unique_ptr<lua_State, StateDeleter> serviceL;
+};
+
+struct ServiceConfig
+{
+
 };

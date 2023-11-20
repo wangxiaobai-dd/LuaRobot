@@ -8,7 +8,7 @@
 
 static void usage()
 {
-    std::cout << "è¯·è¾“å…¥è„šæœ¬ xxx.lua, ./main example.lua" << std::endl;
+    std::cout << "ÇëÖ¸¶¨½Å±¾ xxx.lua, ./main example.lua" << std::endl;
 }
 
 static void report(std::string_view what)
@@ -32,8 +32,6 @@ int main(int argc, char const *argv[])
         return -1;
     }
 
-    auto server = std::make_shared<Server>();
-
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
 
@@ -43,12 +41,14 @@ int main(int argc, char const *argv[])
         report("load lua fail");
         return -1;
     }
+
     err = lua_pcall(L, 0, 1, 0);
     if(err != LUA_OK)
     {
         report("exec lua fail");
         return -1;
     }
+
     if(lua_type(L, -1) != LUA_TTABLE)
     {
         report("need load config table");
@@ -57,6 +57,10 @@ int main(int argc, char const *argv[])
     uint32_t threads = 0;
     threads = lua_opt_field<uint32_t>(L, -1, "threads", threads);
     std::cout << threads << std::endl;
+
+    auto server = std::make_shared<Server>(threads);
+    server->newService();
+    server->run();
 
     return 0;
 }
