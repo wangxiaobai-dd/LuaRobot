@@ -5,7 +5,7 @@ Server::Server(uint32_t threads)
 {
     for(uint32_t i = 0; i < threads; ++i)
     {
-       workerVec.emplace_back(std::make_unique<Worker>(shared_from_this(), i + 1));
+       workerVec.emplace_back(std::make_unique<Worker>(this, i + 1));
     }
 
     for(auto& w : workerVec)

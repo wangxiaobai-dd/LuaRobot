@@ -13,6 +13,6 @@ public:
     void run();
 
 private:
-    std::shared_ptr<Server> server;
+    Server* server;
     std::thread th;
 };
