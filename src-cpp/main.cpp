@@ -8,7 +8,7 @@
 
 static void usage()
 {
-    std::cout << "è¯·è¾“å…¥è„šæœ¬ xxx.lua, ./main example.lua" << std::endl;
+    std::cout << "ÇëÖ¸¶¨½Å±¾ xxx.lua, ./main example.lua" << std::endl;
 }
 
 static void report(std::string_view what)
@@ -43,12 +43,14 @@ int main(int argc, char const *argv[])
         report("load lua fail");
         return -1;
     }
+
     err = lua_pcall(L, 0, 1, 0);
     if(err != LUA_OK)
     {
         report("exec lua fail");
         return -1;
     }
+        
     if(lua_type(L, -1) != LUA_TTABLE)
     {
         report("need load config table");

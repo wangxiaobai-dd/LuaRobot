@@ -1,8 +1,6 @@
-
+#pragma once
 // from moon
 
-#pragma once
-#include "../third/lua/lua.h"
 #include "../third/lua/lua.hpp"
 #include <string>
 
