@@ -2,6 +2,8 @@
 
 #include "../third/lua/lua.hpp"
 
+constexpr uint32_t WORKER_ID_SHIFT = 24;
+
 struct StateDeleter
 {
     void operator()(lua_State *L) const

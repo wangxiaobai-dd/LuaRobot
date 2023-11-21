@@ -59,7 +59,6 @@ int main(int argc, char const *argv[])
     std::cout << threads << std::endl;
 
     auto server = std::make_shared<Server>(threads);
-    server->newService();
     server->run();
 
     return 0;

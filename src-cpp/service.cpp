@@ -1,5 +1,7 @@
 
 #include "service.h"
+#include "server.h"
+#include "worker.h"
 #include <cstdint>
 
 LuaService::LuaService()
@@ -34,4 +36,10 @@ int LuaService::setCallback(lua_State *L)
 void LuaService::init()
 {
 
+}
+
+void LuaService::setContext(Server* _server, Worker* _worker)
+{
+    server = _server;
+    worker = _worker;
 }

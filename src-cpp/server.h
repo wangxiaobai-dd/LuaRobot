@@ -12,15 +12,43 @@
 class Server : public std::enable_shared_from_this<Server>
 {
 public:
+    
+    class TimerExpire
+    {
+    public:
+        TimerExpire() = default;
+
+        TimerExpire(uint32_t _timerID, uint32_t _serviceID, Server* srv)
+            : timerID(_timerID), serviceID(_serviceID), server(srv) {}
+
+        void operator()()
+        {
+            server->onTimer(serviceID, timerID);
+        }
+
+        uint32_t id() const
+        {
+            return timerID;
+        }
+
+    private:
+        uint32_t timerID = 0;
+        uint32_t serviceID = 0;
+        Server* server = nullptr;
+    };
+
     Server() = delete;
     Server(uint32_t threads = 1);
-    void newService();
+    void newService(uint32_t workerID);
     void removeService();
     void sendToService();
     void sendToServer();
     void run();
+    void onTimer(uint32_t serviceID, uint32_t timerID);
+
+    WorkerPtr getWorker(uint32_t workerID);
+    WorkerPtr nextWorker();
 
 private:
-    std::vector<std::unique_ptr<Worker>> workerVec;
-    std::unordered_map<ServiceType, std::unique_ptr<LuaService>> serviceMap;
+    std::vector<WorkerPtr> workerVec;
 };
