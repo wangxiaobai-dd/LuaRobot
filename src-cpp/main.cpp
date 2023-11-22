@@ -8,7 +8,7 @@
 
 static void usage()
 {
-    std::cout << "ÇëÖ¸¶¨½Å±¾ xxx.lua, ./main example.lua" << std::endl;
+    std::cout << "ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Å±ï¿½ xxx.lua, ./main example.lua" << std::endl;
 }
 
 static void report(std::string_view what)
@@ -61,6 +61,7 @@ int main(int argc, char const* argv[])
     std::cout << path << std::endl;
 
     auto server = std::make_shared<Server>(threads);
+    server->envPath = path;
     server->run();
 
     return 0;

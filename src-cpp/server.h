@@ -46,8 +46,11 @@ public:
     void run();
     void onTimer(uint32_t serviceID, uint32_t timerID);
 
-    WorkerPtr getWorker(uint32_t workerID);
-    WorkerPtr nextWorker();
+    WorkerPtr getWorkerByWorkerID(uint32_t workerID);
+    WorkerPtr getWorkerByServiceID(uint32_t serviceID);
+    WorkerPtr nextMinWorker();
+    
+    std::string envPath;
 
 private:
     std::vector<WorkerPtr> workerVec;

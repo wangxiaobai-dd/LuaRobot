@@ -31,14 +31,19 @@ void Server::run()
     
 }
 
-WorkerPtr Server::getWorker(uint32_t workerID)
+WorkerPtr Server::getWorkerByWorkerID(uint32_t workerID)
 {
     if(!workerID || workerID > workerVec.size())
         return nullptr;
     return workerVec[workerID - 1];
 }
 
-WorkerPtr Server::nextWorker()
+WorkerPtr Server::getWorkerByServiceID(uint32_t serviceID)
+{
+    return nullptr;
+}
+
+WorkerPtr Server::nextMinWorker()
 {
     if(workerVec.empty())
         return nullptr;
