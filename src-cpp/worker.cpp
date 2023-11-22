@@ -17,7 +17,7 @@ void Worker::stop()
 {
 }
 
-void Worker::newService()
+void Worker::newService(std::unique_ptr<ServiceConfig> config)
 {
     // push func into queue
     serviceNum.fetch_add(1, std::memory_order_release);
@@ -38,7 +38,23 @@ void Worker::newService()
     };
 }
 
-void Worker::send()
-{
-    
-}
+   void worker::send(message&& msg)
+    {
+        ++mqsize_;
+        if (mq_.push_back(std::move(msg)) == 1)
+        {
+            asio::post(io_ctx_, [this]() {
+                if (!mq_.try_swap(swapmq_))
+                    return;
+
+                service* s = nullptr;
+                for (auto& msg : swapmq_)
+                {
+                    handle_one(s, std::move(msg));
+                    --mqsize_;
+                }
+
+                swapmq_.clear();
+            });
+        }
+    }

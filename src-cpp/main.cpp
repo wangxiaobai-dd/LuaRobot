@@ -16,7 +16,7 @@ static void report(std::string_view what)
     std::cerr << what << std::endl;
 }
 
-int main(int argc, char const *argv[])
+int main(int argc, char const* argv[])
 {
     if(argc < 1)
     {
@@ -32,7 +32,7 @@ int main(int argc, char const *argv[])
         return -1;
     }
 
-    lua_State *L = luaL_newstate();
+    lua_State* L = luaL_newstate();
     luaL_openlibs(L);
 
     int err = luaL_loadfile(L, script.data());
@@ -54,9 +54,11 @@ int main(int argc, char const *argv[])
         report("need load config table");
         return -1;
     }
-    uint32_t threads = 0;
-    threads = lua_opt_field<uint32_t>(L, -1, "threads", threads);
+    uint32_t threads = lua_opt_field<uint32_t>(L, -1, "threads");
     std::cout << threads << std::endl;
+
+    std::string path = lua_opt_field<std::string>(L, -1, "path");
+    std::cout << path << std::endl;
 
     auto server = std::make_shared<Server>(threads);
     server->run();
