@@ -15,13 +15,23 @@ void Worker::run()
 
 void Worker::stop()
 {
+
 }
 
-void Worker::newService(std::unique_ptr<ServiceConfig> config)
+void Worker::wait()
+{
+    if(th.joinable())
+    {
+        th.join();
+    }
+}
+
+void Worker::newService(std::unique_ptr<ServiceOption> option)
 {
     // push func into queue
     serviceNum.fetch_add(1, std::memory_order_release);
-    auto func = [this]()
+    // todo thread safe 
+    auto func = [this, option = std::move(option)]()
     {
         do
         {
@@ -30,6 +40,7 @@ void Worker::newService(std::unique_ptr<ServiceConfig> config)
             if(!service)
                 break;
             service->setContext(server, this);
+            service->init(option);
             serviceMap.emplace(id, std::move(service));
             return;
         } while(false);
@@ -38,12 +49,13 @@ void Worker::newService(std::unique_ptr<ServiceConfig> config)
     };
 }
 
-   void worker::send(message&& msg)
+void worker::send(message&& msg)
+{
+    ++mqsize_;
+    if(mq_.push_back(std::move(msg)) == 1)
     {
-        ++mqsize_;
-        if (mq_.push_back(std::move(msg)) == 1)
-        {
-            asio::post(io_ctx_, [this]() {
+        asio::post(io_ctx_, [this]()
+                   {
                 if (!mq_.try_swap(swapmq_))
                     return;
 
@@ -54,7 +66,6 @@ void Worker::newService(std::unique_ptr<ServiceConfig> config)
                     --mqsize_;
                 }
 
-                swapmq_.clear();
-            });
-        }
+                swapmq_.clear(); });
     }
+}

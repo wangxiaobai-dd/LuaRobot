@@ -16,10 +16,10 @@ Server::Server(uint32_t threads)
 
 void Server::newService(uint32_t workerID)
 {
-    auto worker = getWorker(workerID);
+    auto worker = getWorkerByWorkerID(workerID);
     if(!worker)
     {
-        worker = nextWorker();
+        worker = nextMinWorker();
         if(!worker)
             return;
     }
@@ -28,7 +28,18 @@ void Server::newService(uint32_t workerID)
 
 void Server::run()
 {
-    
+    while(true)
+    {
+    }
+    wait();
+}
+
+void Server::wait()
+{
+    for(auto& w : workerVec)
+    {
+        w->wait();
+    }
 }
 
 WorkerPtr Server::getWorkerByWorkerID(uint32_t workerID)

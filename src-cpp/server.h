@@ -1,7 +1,6 @@
 #pragma once
 
 #include "service.h"
-#include "service_type.h"
 #include "worker.h"
 #include <unordered_map>
 #include <vector>
@@ -12,7 +11,6 @@
 class Server : public std::enable_shared_from_this<Server>
 {
 public:
-    
     class TimerExpire
     {
     public:
@@ -49,9 +47,10 @@ public:
     WorkerPtr getWorkerByWorkerID(uint32_t workerID);
     WorkerPtr getWorkerByServiceID(uint32_t serviceID);
     WorkerPtr nextMinWorker();
-    
+
     std::string envPath;
 
 private:
+    void wait();
     std::vector<WorkerPtr> workerVec;
 };

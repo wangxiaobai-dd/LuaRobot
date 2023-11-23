@@ -4,6 +4,8 @@
 #include <memory>
 #include <string>
 
+extern "C" void registerLibs(lua_State* L);
+
 class Server;
 class Worker;
 
@@ -12,12 +14,12 @@ struct CallbackContext
     lua_State* callbackL = nullptr;
 };
 
-// 创建服务
-struct ServiceConfig
+// 服务配置
+struct ServiceOption
 {
     uint32_t workerID = 0;
     std::string luaFile;
-    std::string envPath;  // lua 环境变量 搜索模块
+    std::string envPath; // lua 环境变量 搜索模块
 };
 
 // 服务间使用消息通信，不能直接访问调用
@@ -25,40 +27,34 @@ class LuaService
 {
 public:
     LuaService();
-    
-    static LuaService* getServiceFromL(lua_State* L);
-    static int setCallback(lua_State* L);
 
-    void init();
+    static LuaService* getServiceFromL(lua_State* L);
+
+    bool init(std::unique_ptr<ServiceOption> option);
     void setContext(Server* _server, Worker* _worker);
+    void setCB(CallbackContext* cb) { callback = cb; }
 
 private:
-    CallbackContext* callback;
+    CallbackContext* callback = nullptr;
     std::unique_ptr<lua_State, StateDeleter> serviceL;
     Server* server = nullptr;
     Worker* worker = nullptr;
     uint32_t serviceID = 0;
 };
 
-  template<typename Service, typename Message>
-    inline void handle_message(Service&& s, Message&& m)
+template <typename Service, typename Message>
+inline void handle_message(Service&& s, Message&& m)
+{
+
+    uint32_t receiver = m.receiver();
+    s->dispatch(&m);
+    // redirect message
+    if(m.receiver() != receiver)
     {
-        try
+        MOON_ASSERT(!m.broadcast(), "can not redirect broadcast message");
+        if constexpr(std::is_rvalue_reference_v<decltype(m)>)
         {
-            uint32_t receiver = m.receiver();
-            s->dispatch(&m);
-            //redirect message
-            if (m.receiver() != receiver)
-            {
-                MOON_ASSERT(!m.broadcast(), "can not redirect broadcast message");
-                if constexpr (std::is_rvalue_reference_v<decltype(m)>)
-                {
-                    s->get_server()->send_message(std::forward<message>(m));
-                }
-            }
-        }
-        catch (const std::exception& e)
-        {
-            CONSOLE_ERROR(s->logger(), "service::handle_message exception: %s", e.what());
+            s->get_server()->send_message(std::forward<message>(m));
         }
     }
+}

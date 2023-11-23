@@ -62,7 +62,11 @@ int main(int argc, char const* argv[])
 
     auto server = std::make_shared<Server>(threads);
     server->envPath = path;
+    // option
+    
     server->run();
 
     return 0;
 }
+
+

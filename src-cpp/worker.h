@@ -14,8 +14,9 @@ public:
 
     void run();
     void stop();
-    void newService();
+    void newService(std::unique_ptr<ServiceOption>& option);
     void send();
+    void wait();
 
     std::atomic_uint32_t serviceNum = 0;
     std::atomic_bool shareThread = true;
