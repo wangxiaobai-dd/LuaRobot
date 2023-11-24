@@ -14,23 +14,23 @@ Server::Server(uint32_t threads)
     }
 }
 
-void Server::newService(uint32_t workerID)
+void Server::newService(std::unique_ptr<ServiceOption> option)
 {
-    auto worker = getWorkerByWorkerID(workerID);
+    auto worker = getWorkerByWorkerID(option->workerID);
     if(!worker)
     {
         worker = nextMinWorker();
         if(!worker)
             return;
     }
-    worker->newService();
+    worker->newService(std::move(option));
 }
 
 void Server::run()
 {
-    while(true)
-    {
-    }
+    // while(true)
+    // {
+    // }
     wait();
 }
 

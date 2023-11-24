@@ -4,23 +4,11 @@
 #include <memory>
 #include <string>
 
-extern "C" void registerLibs(lua_State* L);
 
 class Server;
 class Worker;
 
-struct CallbackContext
-{
-    lua_State* callbackL = nullptr;
-};
 
-// 服务配置
-struct ServiceOption
-{
-    uint32_t workerID = 0;
-    std::string luaFile;
-    std::string envPath; // lua 环境变量 搜索模块
-};
 
 // 服务间使用消息通信，不能直接访问调用
 class LuaService
@@ -30,7 +18,7 @@ public:
 
     static LuaService* getServiceFromL(lua_State* L);
 
-    bool init(std::unique_ptr<ServiceOption> option);
+    bool init(const ServiceOption& option);
     void setContext(Server* _server, Worker* _worker);
     void setCB(CallbackContext* cb) { callback = cb; }
 
@@ -42,6 +30,7 @@ private:
     uint32_t serviceID = 0;
 };
 
+/*
 template <typename Service, typename Message>
 inline void handle_message(Service&& s, Message&& m)
 {
@@ -58,3 +47,4 @@ inline void handle_message(Service&& s, Message&& m)
         }
     }
 }
+*/

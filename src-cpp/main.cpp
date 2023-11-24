@@ -62,11 +62,16 @@ int main(int argc, char const* argv[])
 
     auto server = std::make_shared<Server>(threads);
     server->envPath = path;
-    // option
-    
+
+    // test
+    auto option = std::make_unique<ServiceOption>();
+    option->luaFile = "../lua/testservice.lua";
+    server->newService(std::move(option));
+
     server->run();
 
     return 0;
 }
+
 
 

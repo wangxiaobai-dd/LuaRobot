@@ -1,7 +1,7 @@
 #pragma once
 // from moon
 
-#include "../third/lua/lua.hpp"
+#include "lua.hpp"
 #include <string>
 
 struct lua_scope_pop

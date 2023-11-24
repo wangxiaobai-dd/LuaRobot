@@ -40,15 +40,18 @@ void Worker::newService(std::unique_ptr<ServiceOption> option)
             if(!service)
                 break;
             service->setContext(server, this);
-            service->init(option);
+            service->init(*option);
             serviceMap.emplace(id, std::move(service));
             return;
         } while(false);
 
         serviceNum.fetch_sub(1, std::memory_order_release);
     };
+
+    func();
 }
 
+/*
 void worker::send(message&& msg)
 {
     ++mqsize_;
@@ -69,3 +72,4 @@ void worker::send(message&& msg)
                 swapmq_.clear(); });
     }
 }
+*/

@@ -37,7 +37,7 @@ public:
 
     Server() = delete;
     Server(uint32_t threads = 1);
-    void newService(uint32_t workerID);
+    void newService(std::unique_ptr<ServiceOption> option);
     void removeService();
     void sendToService();
     void sendToServer();

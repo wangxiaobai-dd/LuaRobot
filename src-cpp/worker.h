@@ -3,6 +3,9 @@
 #include <atomic>
 #include <memory>
 #include <thread>
+#include <unordered_map>
+#include "common.h"
+#include "service.h"
 
 class Server;
 
@@ -14,7 +17,7 @@ public:
 
     void run();
     void stop();
-    void newService(std::unique_ptr<ServiceOption>& option);
+    void newService(std::unique_ptr<ServiceOption> option);
     void send();
     void wait();
 

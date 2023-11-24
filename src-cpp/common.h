@@ -1,11 +1,24 @@
 #pragma once
 
-#include "../third/lua/lua.hpp"
+#include "lua.hpp"
 #include <functional>
 #include <mutex>
 #include <queue>
 
 constexpr uint32_t WORKER_ID_SHIFT = 24;
+
+struct CallbackContext
+{
+    lua_State* callbackL = nullptr;
+};
+
+// 服务配置
+struct ServiceOption
+{
+    uint32_t workerID = 0;
+    std::string luaFile;
+    std::string envPath; // lua 环境变量 搜索模块
+};
 
 struct StateDeleter
 {
@@ -40,7 +53,7 @@ public:
     T pop()
     {
         std::lock_guard<std::mutex> lock(mtx);
-        auto msg = myQueue.front();
+        auto msg = msgQueue.front();
         return msg;
     }
 

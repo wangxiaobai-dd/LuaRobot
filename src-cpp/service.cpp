@@ -1,9 +1,12 @@
 
 #include "service.h"
+#include "lauxlib.h"
 #include "server.h"
 #include "worker.h"
-#include "lauxlib.h"
+#include <cassert>
 #include <cstdint>
+
+extern "C" void registerLibs(lua_State* L);
 
 LuaService::LuaService()
 {
@@ -23,24 +26,26 @@ void LuaService::setContext(Server* _server, Worker* _worker)
     worker = _worker;
 }
 
-static int loadLibs(lua_State* L)
+static int loadLuaFile(lua_State* L)
 {
     const ServiceOption* option = (const ServiceOption*)lua_touserdata(L, 1);
 
     luaL_openlibs(L);
     registerLibs(L);
 
+    // 设置环境变量 package.path
     if((luaL_dostring(L, option->envPath.data())) != LUA_OK)
         return 1;
-        
+
+    // 解析luaFile
     if((luaL_loadfile(L, option->luaFile.data())) != LUA_OK)
         return 1;
-    
-    lua_call(L, 1, 0);
+
+    lua_call(L, 0, 0);
     return 0;
 };
 
-bool LuaService::init(std::unique_ptr<ServiceOption>& option)
+bool LuaService::init(const ServiceOption& option)
 {
     lua_State* L = serviceL.get();
 
@@ -50,32 +55,24 @@ bool LuaService::init(std::unique_ptr<ServiceOption>& option)
     lua_pushcfunction(L, traceback);
     int trace_fn = lua_gettop(L);
 
-    lua_pushcfunction(L, loadLibs);
-    lua_pushlightuserdata(L, (void*)&conf);
+    lua_pushcfunction(L, loadLuaFile);
+    lua_pushlightuserdata(L, (void*)&option);
 
     if(lua_pcall(L, 1, LUA_MULTRET, trace_fn) != LUA_OK || lua_gettop(L) > 1)
     {
-        CONSOLE_ERROR(logger(), "new_service lua_error:\n%s.", lua_tostring(L, -1));
         return false;
     }
 
-    lua_pop(L, 1);
-
-    if(unique_ && !server_->set_unique_service(name_, id_))
-    {
-        CONSOLE_ERROR(logger(), "duplicate unique service name '%s'.", name_.data());
-        return false;
-    }
+    lua_pop(L, 1); // traceback
 
     lua_gc(L, LUA_GCRESTART, 0);
 
     assert(lua_gettop(L) == 0);
 
-    ok_ = true;
-
-    return ok_;
+    return true;
 }
 
+/*
 void lua_service::dispatch(message* msg)
 {
     if(!ok())
@@ -139,3 +136,4 @@ void lua_service::dispatch(message* msg)
         lua_pop(L, 1);
     }
 }
+*/
