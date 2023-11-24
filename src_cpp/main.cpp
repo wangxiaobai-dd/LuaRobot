@@ -55,23 +55,21 @@ int main(int argc, char const* argv[])
         return -1;
     }
     uint32_t threads = lua_opt_field<uint32_t>(L, -1, "threads");
-    std::cout << threads << std::endl;
+    std::cout << "threads:" << threads << std::endl;
 
+    // package path
     std::string path = lua_opt_field<std::string>(L, -1, "path");
-    std::cout << path << std::endl;
+    std::cout << "path:" << path << std::endl;
 
     auto server = std::make_shared<Server>(threads);
     server->envPath = path;
 
     // test
     auto option = std::make_unique<ServiceOption>();
-    option->luaFile = "../lua/testservice.lua";
+    option->luaFile = "../lua-test/testservice.lua";
     server->newService(std::move(option));
 
     server->run();
 
     return 0;
 }
-
-
-
