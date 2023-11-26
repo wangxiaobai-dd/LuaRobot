@@ -1,6 +1,7 @@
 
 #include "service.h"
 #include "lauxlib.h"
+#include "lua_utility.h"
 #include "server.h"
 #include "worker.h"
 #include <cassert>
@@ -38,8 +39,12 @@ static int loadLuaFile(lua_State* L)
         return 1;
 
     // ½âÎöluaFile
-    if((luaL_loadfile(L, option->luaFile.data())) != LUA_OK)
+    if(auto ret = luaL_loadfile(L, option->luaFile.data()); ret != LUA_OK)
+    {
+        std::cout << lua_tostring(L, -1) << std::endl;
+        std::cout << "luaL_loadfile err:" << ret << std::endl;
         return 1;
+    }
 
     lua_call(L, 0, 0);
     return 0;
@@ -53,15 +58,16 @@ bool LuaService::init(const ServiceOption& option)
     lua_gc(L, LUA_GCGEN, 0, 0);
 
     lua_pushcfunction(L, traceback);
-    int trace_fn = lua_gettop(L);
+    int traceN = lua_gettop(L);
+
+    std::cout << "trace_fn:" << traceN << std::endl;
 
     lua_pushcfunction(L, loadLuaFile);
     lua_pushlightuserdata(L, (void*)&option);
 
-    if(lua_pcall(L, 1, LUA_MULTRET, trace_fn) != LUA_OK || lua_gettop(L) > 1)
-    {
+    // lua_gettop(L) > 1 ÓÐ´íÎó  top == 2 2:err info
+    if(lua_pcall(L, 1, LUA_MULTRET, 1) != LUA_OK || lua_gettop(L) > 1)
         return false;
-    }
 
     lua_pop(L, 1); // traceback
 

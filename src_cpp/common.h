@@ -2,6 +2,7 @@
 
 #include "lua.hpp"
 #include <functional>
+#include <iostream>
 #include <mutex>
 #include <queue>
 
@@ -27,18 +28,6 @@ struct StateDeleter
         lua_close(L);
     }
 };
-
-inline int traceback(lua_State* L)
-{
-    const char* msg = lua_tostring(L, 1);
-    if(msg)
-        luaL_traceback(L, L, msg, 1);
-    else
-    {
-        lua_pushliteral(L, "no error");
-    }
-    return 1;
-}
 
 // test
 template <typename T>

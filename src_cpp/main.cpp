@@ -8,7 +8,7 @@
 
 static void usage()
 {
-    std::cout << "ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Å±ï¿½ xxx.lua, ./main example.lua" << std::endl;
+    std::cout << "ÐèÒªÖ´ÐÐ²ÎÊý xxx.lua, ./main example.lua" << std::endl;
 }
 
 static void report(std::string_view what)
@@ -25,7 +25,7 @@ int main(int argc, char const* argv[])
     }
 
     // std::string script = argv[1];
-    std::string script = "../lua/example.lua";
+    std::string script = "../lua_test/example.lua";
     if(std::filesystem::path(script).extension() != ".lua")
     {
         usage();
@@ -54,11 +54,11 @@ int main(int argc, char const* argv[])
         report("need load config table");
         return -1;
     }
-    uint32_t threads = lua_opt_field<uint32_t>(L, -1, "threads");
+    uint32_t threads = getLuaField<uint32_t>(L, -1, "threads");
     std::cout << "threads:" << threads << std::endl;
 
     // package path
-    std::string path = lua_opt_field<std::string>(L, -1, "path");
+    std::string path = getLuaField<std::string>(L, -1, "path");
     std::cout << "path:" << path << std::endl;
 
     auto server = std::make_shared<Server>(threads);
@@ -66,7 +66,8 @@ int main(int argc, char const* argv[])
 
     // test
     auto option = std::make_unique<ServiceOption>();
-    option->luaFile = "../lua-test/testservice.lua";
+    // option->luaFile = "../lua_test/testservice.lua";
+    option->luaFile = "interface.lua";
     server->newService(std::move(option));
 
     server->run();
