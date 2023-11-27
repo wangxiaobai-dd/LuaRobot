@@ -67,7 +67,8 @@ int main(int argc, char const* argv[])
     // test
     auto option = std::make_unique<ServiceOption>();
     // option->luaFile = "../lua_test/testservice.lua";
-    option->luaFile = "interface.lua";
+    option->luaFile = "../lua_scripts/interface.lua";
+    option->envPath = server->envPath;
     server->newService(std::move(option));
 
     server->run();

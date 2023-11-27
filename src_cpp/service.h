@@ -21,6 +21,7 @@ public:
     bool init(const ServiceOption& option);
     void setContext(Server* _server, Worker* _worker);
     void setCB(CallbackContext* cb) { callback = cb; }
+    Server* getServer(){ return server; }
 
 private:
     CallbackContext* callback = nullptr;

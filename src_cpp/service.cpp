@@ -36,13 +36,15 @@ static int loadLuaFile(lua_State* L)
 
     // 设置环境变量 package.path
     if((luaL_dostring(L, option->envPath.data())) != LUA_OK)
-        return 1;
-
-    // 解析luaFile
-    if(auto ret = luaL_loadfile(L, option->luaFile.data()); ret != LUA_OK)
     {
         std::cout << lua_tostring(L, -1) << std::endl;
-        std::cout << "luaL_loadfile err:" << ret << std::endl;
+        return 1;
+    }
+
+    // 解析luaFile
+    if(luaL_loadfile(L, option->luaFile.data()) != LUA_OK)
+    {
+        std::cout << lua_tostring(L, -1) << std::endl;
         return 1;
     }
 
