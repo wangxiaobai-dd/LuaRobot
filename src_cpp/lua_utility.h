@@ -3,6 +3,7 @@
 #include "lua.hpp"
 #include <iostream>
 #include <string>
+#include <vector>
 
 struct LuaScopePop
 {
@@ -22,6 +23,11 @@ struct LuaScopePop
     }
 };
 
+struct LuaVector
+{
+    std::vector<std::string> strVec;
+};
+void printLuaStack(lua_State* L);
 template <typename Type>
 Type getLuaValue(lua_State* L, int index)
 {
@@ -53,6 +59,37 @@ Type getLuaValue(lua_State* L, int index)
     else if constexpr(std::is_floating_point_v<T>)
     {
         return static_cast<T>(luaL_checknumber(L, index));
+    }
+    else if constexpr(std::is_same_v<T, LuaVector>)
+    {
+        LuaVector table;
+        if(!lua_istable(L, index))
+        {
+            std::cout << "Not a table" << std::endl;
+            return table;
+        }
+        lua_pushnil(L);
+        printLuaStack(L);
+        while(lua_next(L, index) != 0)
+        {
+            std::cout << "luastring" << std::endl;
+            int valueType = lua_type(L, -3);
+        std::cout << valueType << std::endl;
+            switch(valueType)
+            {
+            case LUA_TSTRING:
+            {
+                const char* value = lua_tostring(L, -1);
+                std::cout <<  ", Value (string): " << value << std::endl;
+                break;
+            }
+            default:
+                std::cout << "Unsupported value type" << std::endl;
+                break;
+            }
+
+            lua_pop(L, 1);
+        }
     }
     else
     {
@@ -114,8 +151,8 @@ inline int traceback(lua_State* L)
     if(msg)
     {
         // top == 1, 1:msg
-       luaL_traceback(L, L, msg, 0);
-       std::cout << lua_tostring(L, -1) << std::endl;
+        luaL_traceback(L, L, msg, 0);
+        std::cout << lua_tostring(L, -1) << std::endl;
     }
     else
     {

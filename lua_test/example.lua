@@ -1,6 +1,6 @@
 local CONFIG = {
     threads = 10,
-    path = { "../lua_test", "../lua_scripts" }
+    path_table = { "../lua_test", "../lua_scripts" }
 }
 
 return CONFIG

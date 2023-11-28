@@ -58,11 +58,11 @@ int main(int argc, char const* argv[])
     std::cout << "threads:" << threads << std::endl;
 
     // package path
-    std::string path = getLuaField<std::string>(L, -1, "path");
-    std::cout << "path:" << path << std::endl;
+    auto pathTable = getLuaField<LuaVector>(L, -1, "path_table");
+  //  std::cout << "path:" << path << std::endl;
 
     auto server = std::make_shared<Server>(threads);
-    server->envPath = path;
+    //server->envPath = path;
 
     
     namespace fs = std::filesystem;
