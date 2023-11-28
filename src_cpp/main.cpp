@@ -64,10 +64,17 @@ int main(int argc, char const* argv[])
     auto server = std::make_shared<Server>(threads);
     server->envPath = path;
 
+    
+    namespace fs = std::filesystem;
+    fs::path currentPath = fs::current_path();
+    std::cout << "Current directory: " << currentPath << std::endl;
+
+
+
     // test
     auto option = std::make_unique<ServiceOption>();
     // option->luaFile = "../lua_test/testservice.lua";
-    option->luaFile = "../lua_scripts/interface.lua";
+    option->luaFile = "../lua_scripts/server.lua";
     option->envPath = server->envPath;
     server->newService(std::move(option));
 

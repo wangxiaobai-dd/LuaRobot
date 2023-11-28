@@ -1,9 +1,6 @@
-
 local CONFIG = {
     threads = 10,
-    path = "package.path = '../lua_scripts/?.lua;lua_test/?.lua'",
+    path = { "../lua_test", "../lua_scripts" }
 }
 
 return CONFIG
-
-

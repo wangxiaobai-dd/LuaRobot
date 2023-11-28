@@ -12,6 +12,8 @@ extern "C" void registerLibs(lua_State* L);
 LuaService::LuaService()
 {
     serviceL = std::unique_ptr<lua_State, StateDeleter>(luaL_newstate());
+    intptr_t p = (intptr_t)this;
+    memcpy(lua_getextraspace(serviceL.get()), &p, LUA_EXTRASPACE);
 }
 
 LuaService* LuaService::getServiceFromL(lua_State* L)
@@ -35,14 +37,15 @@ static int loadLuaFile(lua_State* L)
     registerLibs(L);
 
     // 设置环境变量 package.path
-    if((luaL_dostring(L, option->envPath.data())) != LUA_OK)
+    std::cout << option->envPath << std::endl;
+    if((luaL_dostring(L, option->envPath.c_str())) != LUA_OK)
     {
         std::cout << lua_tostring(L, -1) << std::endl;
         return 1;
     }
 
     // 解析luaFile
-    if(luaL_loadfile(L, option->luaFile.data()) != LUA_OK)
+    if(luaL_loadfile(L, option->luaFile.c_str()) != LUA_OK)
     {
         std::cout << lua_tostring(L, -1) << std::endl;
         return 1;
