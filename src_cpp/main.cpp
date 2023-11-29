@@ -59,22 +59,25 @@ int main(int argc, char const* argv[])
 
     // package path
     auto pathTable = getLuaField<LuaVector>(L, -1, "path_table");
-  //  std::cout << "path:" << path << std::endl;
-
-    auto server = std::make_shared<Server>(threads);
-    //server->envPath = path;
-
     
-    namespace fs = std::filesystem;
-    fs::path currentPath = fs::current_path();
-    std::cout << "Current directory: " << currentPath << std::endl;
-
-
-
+    std::string path = "package.path = '";
+    for(const auto& p : pathTable.strVec)
+    {
+        path += p;
+        path += "/?.lua";
+        path += ";";
+    }
+    path += "'";
+    std::cout << path << std::endl;
+    
+    auto server = std::make_shared<Server>(threads);
+    server->envPath = path;
+    server->luaDirs = pathTable.strVec;
+    
     // test
     auto option = std::make_unique<ServiceOption>();
     // option->luaFile = "../lua_test/testservice.lua";
-    option->luaFile = "../lua_scripts/server.lua";
+    option->luaFile = "server.lua";
     option->envPath = server->envPath;
     server->newService(std::move(option));
 

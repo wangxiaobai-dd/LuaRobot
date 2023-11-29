@@ -1,6 +1,9 @@
 
 #include "server.h"
 
+std::vector<std::string> Server::luaDirs;
+std::string Server::envPath;
+
 Server::Server(uint32_t threads)
 {
     for(uint32_t i = 0; i < threads; ++i)

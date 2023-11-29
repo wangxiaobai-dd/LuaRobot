@@ -48,7 +48,8 @@ public:
     WorkerPtr getWorkerByServiceID(uint32_t serviceID);
     WorkerPtr nextMinWorker();
 
-    std::string envPath;
+    static std::string envPath;
+    static std::vector<std::string> luaDirs;
 
 private:
     void wait();

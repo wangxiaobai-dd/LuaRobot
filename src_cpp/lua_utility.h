@@ -27,7 +27,7 @@ struct LuaVector
 {
     std::vector<std::string> strVec;
 };
-void printLuaStack(lua_State* L);
+
 template <typename Type>
 Type getLuaValue(lua_State* L, int index)
 {
@@ -63,38 +63,40 @@ Type getLuaValue(lua_State* L, int index)
     else if constexpr(std::is_same_v<T, LuaVector>)
     {
         LuaVector table;
-        if(!lua_istable(L, index))
+        if(!lua_istable(L, -1))
         {
-            std::cout << "Not a table" << std::endl;
+            std::cout << "not a table" << std::endl;
             return table;
         }
         lua_pushnil(L);
-        printLuaStack(L);
-        while(lua_next(L, index) != 0)
+        while(lua_next(L, -2))
         {
-            std::cout << "luastring" << std::endl;
-            int valueType = lua_type(L, -3);
-        std::cout << valueType << std::endl;
+            int valueType = lua_type(L, -1);
+
             switch(valueType)
             {
             case LUA_TSTRING:
             {
-                const char* value = lua_tostring(L, -1);
-                std::cout <<  ", Value (string): " << value << std::endl;
-                break;
+                std::string value = lua_tostring(L, -1);
+                table.strVec.push_back(value);
+                std::cout << "table value:" << value << std::endl;
             }
+            break;
             default:
-                std::cout << "Unsupported value type" << std::endl;
-                break;
+            {
+                std::cout << "unsupported value type" << std::endl;
             }
-
+            break;
+            }
             lua_pop(L, 1);
         }
+        return table;
     }
     else
     {
         //  static_assert(false, "unsupport type");
     }
+    return Type();
 }
 
 template <typename Type>
@@ -104,7 +106,6 @@ inline Type getLuaField(lua_State* L, int index, std::string_view key, const Typ
     {
         index = lua_gettop(L) + index + 1;
     }
-
     luaL_checktype(L, index, LUA_TTABLE);
     lua_pushlstring(L, key.data(), key.size());
     LuaScopePop scope{L};

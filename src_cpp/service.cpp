@@ -6,6 +6,7 @@
 #include "worker.h"
 #include <cassert>
 #include <cstdint>
+#include <filesystem>
 
 extern "C" void registerLibs(lua_State* L);
 
@@ -29,6 +30,17 @@ void LuaService::setContext(Server* _server, Worker* _worker)
     worker = _worker;
 }
 
+static std::string getFileRealPath(std::string luaFile)
+{
+    for(const auto& dir : Server::luaDirs)
+    {
+        std::string filePath = dir + "/" + luaFile;
+        if(std::filesystem::exists(filePath))
+            return filePath;            
+    }
+    return "";
+}
+
 static int loadLuaFile(lua_State* L)
 {
     const ServiceOption* option = (const ServiceOption*)lua_touserdata(L, 1);
@@ -37,7 +49,6 @@ static int loadLuaFile(lua_State* L)
     registerLibs(L);
 
     // 设置环境变量 package.path
-    std::cout << option->envPath << std::endl;
     if((luaL_dostring(L, option->envPath.c_str())) != LUA_OK)
     {
         std::cout << lua_tostring(L, -1) << std::endl;
@@ -45,7 +56,7 @@ static int loadLuaFile(lua_State* L)
     }
 
     // 解析luaFile
-    if(luaL_loadfile(L, option->luaFile.c_str()) != LUA_OK)
+    if(luaL_loadfile(L, getFileRealPath(option->luaFile).c_str()) != LUA_OK)
     {
         std::cout << lua_tostring(L, -1) << std::endl;
         return 1;
