@@ -39,7 +39,7 @@ static int newService(lua_State* L)
 
 extern "C"
 {
-    int LUAMOD_API luaopen_server(lua_State* L)
+    int LUAMOD_API luaopen_core(lua_State* L)
     {
         luaL_Reg l[] = {
 
@@ -61,6 +61,6 @@ extern "C"
 {
     void registerLibs(lua_State* L)
     {
-        REGISTER_LIBRARY("server", luaopen_server);
+        REGISTER_LIBRARY("core", luaopen_core);
     }
 }

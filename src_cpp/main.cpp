@@ -8,7 +8,7 @@
 
 static void usage()
 {
-    std::cout << "需要执行参数 xxx.lua, ./main example.lua" << std::endl;
+    std::cout << "输入参数: xxx.lua, ./main example.lua" << std::endl;
 }
 
 static void report(std::string_view what)
@@ -76,7 +76,6 @@ int main(int argc, char const* argv[])
     
     // test
     auto option = std::make_unique<ServiceOption>();
-    // option->luaFile = "../lua_test/testservice.lua";
     option->luaFile = "server.lua";
     option->envPath = server->envPath;
     server->newService(std::move(option));

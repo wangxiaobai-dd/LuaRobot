@@ -1,14 +1,19 @@
 
-require("core")
-local server = require("server")
+local core = require("core")
 
 local uid = 0
 local sessionid_coroutine = {}
+local core_new_service = core.new_service
+local server = core
 
-print("interface")
+function server.async(fn, ...)
+    local co = tremove(co_pool) or co_create(routine)
+    coresume(co, fn, ...)
+    return co
+end
 
---- ÁªôÂçèÁ®ãÊò†Â∞Ñid
-function make_session()
+--- ∏¯–≠≥Ã”≥…‰id
+function server.make_session()
     uid = uid + 1
     if nil ~= sessionid_coroutine[uid] then
         print("sessionid is used!")
@@ -18,13 +23,15 @@ function make_session()
     return uid
 end
 
-function new_service(option)
-    local sessionid = make_session()
-    server.new_service(sessionid, option)
+function server.new_service(option)
+    local sessionid = server.make_session()
+    core_new_service(sessionid, option)
     print("new service3")
  --   return core.wait(sessionid)
 end
 
 print(package.path)
 local op = { luafile="testservice.lua" }
-new_service(op)
+server.new_service(op)
+
+return server
