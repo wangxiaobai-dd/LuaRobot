@@ -7,21 +7,21 @@ local core_new_service = core.new_service
 local server = core
 
 
-local co_num = 0
 local co_pool = setmetatable({}, { __mode = "kv" })
 
+-- 协程封装
 local function invoke(co, fn, ...)
-    co_num = co_num + 1
     fn(...)
-    co_num = co_num - 1
     co_pool[#co_pool + 1] = co
+    print("copool ", #co_pool)
 end
 
+-- 协程封装
 local function routine(fn, ...)
-    local co = co_running()
+    local co = coroutine.running()
     invoke(co, fn, ...)
-    while true do
-        invoke(co, co_yield())
+    while true do -- 为了被重复使用
+        invoke(co, coroutine.yield())
     end
 end
 
@@ -37,6 +37,7 @@ end
 
 -- 异步接口
 function server.async(fn, ...)
+    -- 从现有协程池获取 或者 新创建
     local co = table.remove(co_pool) or coroutine.create(routine)
     coresume(co, fn, ...)
     return co
@@ -59,6 +60,12 @@ function server.new_service(option)
     core_new_service(sessionid, option)
     print("new service3")
  --   return core.wait(sessionid)
+end
+
+-- 使当前协程服务退出
+function server.quit()
+    local co = coroutine.running()
+    
 end
 
 print(package.path)
