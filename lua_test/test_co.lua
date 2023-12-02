@@ -7,18 +7,28 @@ local co_resume = coroutine.resume
 local co_close = coroutine.close
 local co_num = 0
 
+local co_id = {}
+
 local function invoke(co, fn, ...)
-    fn(...)
+    print("invoke")
+  --  print(fn)
+    fn(...) -- ÄäÃûº¯ÊýÖÐyield 
     co_pool[#co_pool + 1] = co
-    print("copool ", #co_pool)
+    co_id[co] = #co_pool
+
+    print("invoke finish ", #co_pool)
 end
 
 local function routine(fn, ...)
     local co = co_running()
-    invoke(co, fn, ...)
+  --   fn(...)
+    -- co_pool[#co_pool + 1] = co
+ invoke(co, fn, ...) -- ÄäÃûº¯ÊýÖÐ wait 
      while true do
         print("invoke yield")
-         invoke(co, co_yield())
+      --  co_yield() -- wakeup
+    --    co_pool[#co_pool + 1] = co
+       invoke(co, co_yield()) -- ²»»á½øÈëinvoke 
         print("invoke yield2")
 
      end
@@ -29,17 +39,14 @@ local tremove = table.remove
 local co_create = coroutine.create
 local coresume = coroutine.resume
 
----@param fn fun(...) @éœ€è¦å¼‚æ­¥æ‰§è¡Œçš„å‡½æ•°
----@param ... any @å¯é€‰å‚æ•°ï¼Œä¼ é€’ç»™ fn å‡½æ•°
----@return thread @æ–°åˆ›å»ºçš„åç¨‹
+
 function async(fn, ...)
     local co = table.remove(co_pool) or coroutine.create(routine)
-    print("as", co)
-    print("copool  async", #co_pool)
-     
-   coroutine.resume(co, fn, ...)
+     print("as", co)     
+  coroutine.resume(co, fn, ...)
     return co
 end
+
 function quit()
     local running = co_running()
     print("quit", running)
@@ -48,6 +55,7 @@ end
 local co_yield = coroutine.yield
 
 function wait(sessionid)
+    print("wait")
     local a = coroutine.yield()
 
     if a then
@@ -56,16 +64,6 @@ function wait(sessionid)
         return sessionid
     end
 end
-
-function add()
-    print(1)
-end
-
---local coco  = async(add)
--- wakeup(coco)
--- async(add)
--- async(add)
--- print(#co_pool)
 
 local w = async(function()
   local w = wait(200)
@@ -76,29 +74,20 @@ local w = async(function()
 
 end)
 
-
 function wakeup(co, ...)
     local args = {...}
     coroutine.resume(co, false, "BREAK", args)
 end
 
-print(w)
 -- local c = coroutine.resume(w)
-print(coroutine.status(w))
+print("status1",coroutine.status(w))
 -- print(c)
 wakeup(w)
-print(coroutine.status(w))
+print("status2",coroutine.status(w))
 
---wakeup(w)
-print("new async")
-local ww = async(function()
-    local q = wait(300)
-      print(q)
-     -- print(co_running())
-    -- local qq = wait(300)
-     --print(qq)
-     quit()
+local www = async(function()
+    local ww = wait(300)
+      print(ww)
+
   end)
-wakeup(ww)
-
-quit()
+  --wakeup(www)
