@@ -7,6 +7,9 @@ local co_resume = coroutine.resume
 local co_close = coroutine.close
 local co_num = 0
 
+local co_sessionid = setmetatable({}, { __mode = "kv" }) -- Ð­³Ì³Ø
+
+
 local co_id = {}
 
 local function invoke(co, fn, ...)
