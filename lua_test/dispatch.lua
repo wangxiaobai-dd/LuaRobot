@@ -1,6 +1,5 @@
 
----@param msg message_ptr
----@param PTYPE string
+
 local function _default_dispatch(msg, PTYPE)
     local p = protocol[PTYPE]
     if not p then
