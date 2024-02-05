@@ -37,9 +37,10 @@ public:
 
     Server() = delete;
     Server(uint32_t threads = 1);
+    ~Server();
     void newService(std::unique_ptr<ServiceOption> option);
     void removeService();
-    void sendToService();
+    void sendToService(uint32_t sender, uint32_t receiver, int type, void* data, int size);
     void sendToServer();
     void run();
     void onTimer(uint32_t serviceID, uint32_t timerID);

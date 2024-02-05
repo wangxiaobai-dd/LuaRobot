@@ -35,7 +35,7 @@ int main(int argc, char const* argv[])
     }
 
     sol::state lua;
-    lua.open_libraries(sol::lib::base);
+    lua.open_libraries(sol::lib::base, sol::lib::table);
     auto ret = lua.script_file(script.data());
     if(!ret.valid())
     {
@@ -54,20 +54,19 @@ int main(int argc, char const* argv[])
         }
          err = lua_pcall(L, 0, 1, 0);
           if(err != LUA_OK)
-    {
-        report("exec lua fail");
-        return -1;
-    }
+        {
+            report("exec lua fail");
+            return -1;
+        }
+    */
     
+    lua_State* L = lua.lua_state();
+
     if(lua_type(L, -1) != LUA_TTABLE)
     {
         report("need load config table");
         return -1;
     }
-    */
-
-   
-   
 
     uint32_t threads = getLuaField<uint32_t>(L, -1, "threads");
     std::cout << "threads:" << threads << std::endl;

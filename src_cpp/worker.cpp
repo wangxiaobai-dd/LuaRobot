@@ -1,7 +1,11 @@
 #include "worker.h"
 #include "server.h"
 
-Worker::Worker(Server* s, uint32_t _workerID) : server(s), workerID(_workerID)
+Worker::Worker(Server* s, uint32_t _workerID) : server(s), workerID(_workerID), ctxGuard(asio::make_work_guard(ioCtx))
+{
+}
+
+Worker::~Worker()
 {
 }
 
@@ -9,30 +13,32 @@ void Worker::run()
 {
     th = std::thread([this]()
                      {
+                         ioCtx.run();
+
                          // io run queue
                      });
 }
 
 void Worker::stop()
 {
-
 }
 
 void Worker::wait()
 {
+    ioCtx.stop();
+
     if(th.joinable())
-    {
         th.join();
-    }
 }
 
 void Worker::newService(std::unique_ptr<ServiceOption> option)
 {
     // push func into queue
     serviceNum.fetch_add(1, std::memory_order_release);
-    // todo thread safe 
-    auto func = [this, option = std::move(option)]()
-    {
+    // todo thread safe
+
+    asio::post(ioCtx, [this, option = std::move(option)]()
+               {
         do
         {
             uint32_t id = ++genID | (workerID << WORKER_ID_SHIFT);
@@ -45,10 +51,7 @@ void Worker::newService(std::unique_ptr<ServiceOption> option)
             return;
         } while(false);
 
-        serviceNum.fetch_sub(1, std::memory_order_release);
-    };
-
-    func();
+        serviceNum.fetch_sub(1, std::memory_order_release); });
 }
 
 /*

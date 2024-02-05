@@ -17,6 +17,11 @@ Server::Server(uint32_t threads)
     }
 }
 
+Server::~Server()
+{
+    wait();
+}
+
 void Server::newService(std::unique_ptr<ServiceOption> option)
 {
     auto worker = getWorkerByWorkerID(option->workerID);
@@ -31,9 +36,11 @@ void Server::newService(std::unique_ptr<ServiceOption> option)
 
 void Server::run()
 {
-    // while(true)
-    // {
-    // }
+    while(true)
+    {
+        Sleep(10);
+        break;
+    }
     wait();
 }
 
@@ -80,4 +87,14 @@ WorkerPtr Server::nextMinWorker()
 
 void Server::onTimer(uint32_t serviceID, uint32_t timerID)
 {
+}
+
+    // lua:Âß¼­²ã     send(type, "kick")
+    // server->send
+    // worker->send
+    // worker->handel
+    // worker->dispatch
+void Server::sendToService(uint32_t sender, uint32_t receiver, int type, void* data, int size)
+{
+    
 }
