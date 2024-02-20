@@ -7,7 +7,7 @@ local co_resume = coroutine.resume
 local co_close = coroutine.close
 local co_num = 0
 
-local co_sessionid = setmetatable({}, { __mode = "kv" }) -- Ğ­³Ì³Ø
+local co_sessionid = setmetatable({}, { __mode = "kv" }) -- åç¨‹æ± 
 
 
 local co_id = {}
@@ -15,7 +15,7 @@ local co_id = {}
 local function invoke(co, fn, ...)
     print("invoke")
   --  print(fn)
-    fn(...) -- ÄäÃûº¯ÊıÖĞyield 
+    fn(...) -- åŒ¿åå‡½æ•°ä¸­yield 
     co_pool[#co_pool + 1] = co
     co_id[co] = #co_pool
 
@@ -26,12 +26,12 @@ local function routine(fn, ...)
     local co = co_running()
   --   fn(...)
     -- co_pool[#co_pool + 1] = co
- invoke(co, fn, ...) -- ÄäÃûº¯ÊıÖĞ wait 
+ invoke(co, fn, ...) -- åŒ¿åå‡½æ•°ä¸­ wait 
      while true do
         print("invoke yield")
       --  co_yield() -- wakeup
     --    co_pool[#co_pool + 1] = co
-       invoke(co, co_yield()) -- ²»»á½øÈëinvoke 
+       invoke(co, co_yield()) -- ä¸ä¼šè¿›å…¥invoke 
         print("invoke yield2")
 
      end

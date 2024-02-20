@@ -36,6 +36,7 @@ end
 -- ”≥…‰–≠≥Ãid
 function server.make_session()
     uid = uid + 1
+
     if nil ~= sessionid_coroutine[uid] then
         print("sessionid is used!")
     end

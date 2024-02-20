@@ -40,7 +40,7 @@ public:
     ~Server();
     void newService(std::unique_ptr<ServiceOption> option);
     void removeService();
-    void sendToService(uint32_t sender, uint32_t receiver, int type, void* data, int size);
+    void forwardToActor(uint32_t receiver, int type);
     void sendToServer();
     void run();
     void onTimer(uint32_t serviceID, uint32_t timerID);

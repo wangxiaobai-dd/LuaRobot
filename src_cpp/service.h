@@ -19,6 +19,7 @@ public:
     void setContext(Server* _server, Worker* _worker);
     void setCB(CallbackContext* cb) { callback = cb; }
     Server* getServer(){ return server; }
+    uint32_t getID() { return serviceID; }
 
 private:
     CallbackContext* callback = nullptr;

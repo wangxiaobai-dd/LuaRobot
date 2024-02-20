@@ -1,5 +1,5 @@
 local CONFIG = {
-    threads = 10,
+    threads = 2,
     path_table = { "../lua_test", "../lua_scripts" }
 }
 

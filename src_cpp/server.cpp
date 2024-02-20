@@ -89,12 +89,8 @@ void Server::onTimer(uint32_t serviceID, uint32_t timerID)
 {
 }
 
-    // lua:Âß¼­²ã     send(type, "kick")
-    // server->send
-    // worker->send
-    // worker->handel
-    // worker->dispatch
-void Server::sendToService(uint32_t sender, uint32_t receiver, int type, void* data, int size)
+
+void Server::forwardToActor(uint32_t receiver, int type)
 {
     
 }

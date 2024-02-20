@@ -37,6 +37,24 @@ static int newService(lua_State* L)
     return 0;
 }
 
+// service 即 actor
+// 每一个 robot 都是一个 actor
+static int fowardToActor(lua_State* L)
+{    
+    LuaService* S = LuaService::getServiceFromL(L);
+
+    uint32_t receiver = (uint32_t)luaL_checkinteger(L, 1);
+    luaL_argcheck(L, receiver > 0, 1, "receiver must > 0");
+
+    S->getServer()->forwardToActor(S->getID(), receiver);
+    return 0;
+}
+
+static int sendToGameServer(lua_State* L)
+{
+
+}
+
 extern "C"
 {
     int LUAMOD_API luaopen_core(lua_State* L)
