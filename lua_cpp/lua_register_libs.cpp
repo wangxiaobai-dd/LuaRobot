@@ -52,7 +52,7 @@ static int fowardToActor(lua_State* L)
 
 static int sendToGameServer(lua_State* L)
 {
-
+    return 0;
 }
 
 extern "C"
